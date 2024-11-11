@@ -16,7 +16,6 @@ if (process.env.NODE_ENV === 'local') {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  console.log('주입된 환경 변수: ' + process.env.DATABASE_HOST);
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
