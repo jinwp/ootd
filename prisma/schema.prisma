@@ -28,13 +28,13 @@ model user {
 }
 
 model posting {
-  uploader   user     @relation(fields: [user_id], references: [user_id])
-  user_id   String      @unique
-  post_id   String     @id @default(uuid())
-  images     Image[]
-  text  String
+  uploader  user     @relation(fields: [user_id], references: [user_id])
+  user_id   String   @unique
+  post_id   String   @id @default(uuid())
+  images    Image[]
+  text      String
   date_created  DateTime
-  semester  String
+  semester  String?
 }
 
 model Image {
@@ -60,5 +60,6 @@ model message {
     room_id     String
     sender      user        @relation(fields: [sender_id], references: [user_id])
     sender_id   String
+    content     String
     timestamp   DateTime    @default(now())
 }
