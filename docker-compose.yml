@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: newbie
+      MYSQL_DATABASE: ootd
       MYSQL_USER: sparcs
       MYSQL_PASSWORD: password
     ports:
