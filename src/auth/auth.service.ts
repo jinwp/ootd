@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { ChatService } from '../chat/chat.service';
 
 @Injectable()
 export class AuthService {
@@ -11,12 +12,13 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private userService: UsersService,
     private jwtService: JwtService,
+    private chatService: ChatService,
   ) {}
 
-  async validateUser(id: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.prismaService.user.findUnique({
       where: {
-        user_id: id,
+        email: email,
       },
     });
     if (user && (await bcrypt.compare(pass, user.password))) {
@@ -29,13 +31,25 @@ export class AuthService {
   async signUp(createUserDto: CreateUserDto) {
     const hashPassword = await bcrypt.hash(createUserDto.password, 10);
     try {
-      await this.prismaService.user.create({
+      const newUser = await this.prismaService.user.create({
         data: {
+          ...createUserDto,
           password: hashPassword,
           date_joined: new Date(),
-          ...createUserDto,
         },
       });
+
+      const existingUsers = await this.prismaService.user.findMany({
+        where: {
+          NOT: { user_id: newUser.user_id },
+        },
+      });
+
+      for (const existingUser of existingUsers) {
+        await this.chatService.createChatroom(newUser.user_id, existingUser.user_id)
+      }
+
+      return newUser;
     } catch {
       throw new HttpException(
         'username already exists',
