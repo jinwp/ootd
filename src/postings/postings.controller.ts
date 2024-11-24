@@ -1,7 +1,8 @@
 import {
+  BadRequestException,
   Body,
   Controller,
-  Delete,
+  Delete, ForbiddenException,
   Get,
   Param,
   Post,
@@ -9,10 +10,10 @@ import {
   Request,
   UploadedFiles,
   UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { PostingsService } from './postings.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -23,12 +24,13 @@ export class PostingsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FilesInterceptor('files'))
   async createPosting(
     @Body() createPostingDto: CreatePostingDto,
     @Request() req,
-    @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
+    console.log(createPostingDto);
     const user_id = req.user.user_id;
     return this.postingsService.create(createPostingDto, user_id, files);
   }
@@ -61,12 +63,19 @@ export class PostingsController {
 
   @Post(':post_id')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FilesInterceptor('files'))
   async updatePosting(
     @Body() updatePostingDto: UpdatePostingDto,
     @Param('post_id') post_id: string,
-    @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Request() req,
   ) {
+    const user_id = req.user.user_id;
+    const post = await this.postingsService.findByPostId(post_id);
+
+    if (!post || post.user_id !== user_id) {
+      throw new ForbiddenException('You cannot update other people posting');
+    }
     return this.postingsService.update(updatePostingDto, post_id, files);
   }
 

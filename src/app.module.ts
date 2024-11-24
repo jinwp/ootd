@@ -6,10 +6,13 @@ import { UsersModule } from './users/users.module';
 import { PostingsModule } from './postings/postings.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { PrismaService } from "./prisma.service";
+import { ChatController } from './chat/chat.controller';
+import { ChatService } from "./chat/chat.service";
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [AuthModule, UsersModule, PostingsModule],
-  controllers: [AppController],
-  providers: [AppService, ChatGateway, PrismaService],
+  imports: [ConfigModule.forRoot(), AuthModule, UsersModule, PostingsModule],
+  controllers: [AppController, ChatController],
+  providers: [AppService, ChatGateway, PrismaService, ChatService],
 })
 export class AppModule {}

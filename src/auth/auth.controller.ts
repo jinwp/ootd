@@ -1,8 +1,8 @@
 import { Body, Controller, Post, Request, Res, UseGuards } from "@nestjs/common";
 import { Response } from 'express';
-import { LocalAuthGuard } from "./local-auth.guard";
-import { AuthService } from "./auth.service";
-import { CreateUserDto } from "../users/dto/create-user.dto";
+import { LocalAuthGuard } from './local-auth.guard';
+import { AuthService } from './auth.service';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -17,6 +17,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req, @Res() res: Response) {
+    console.log("로그인 잘 됨");
     const jwt = await this.authService.login(req.user);
     res.setHeader('Authorization', `Bearer ${jwt.access_token}`);
     return res.json(jwt);

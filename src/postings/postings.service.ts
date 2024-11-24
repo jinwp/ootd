@@ -17,8 +17,13 @@ export class PostingsService {
   }
   private s3 = new AWS.S3();
 
-  private async uploadImagesToAWS(files: Express.Multer.File[]) {
+  private async uploadImagesToAWS(files: Array<Express.Multer.File>) {
+    if (!Array.isArray(files)) {
+      files = [files];
+    }
+
     const images = [];
+    //map, foreach 써서 비동기로 for loop 돌리기
     for (const file of files) {
       const uploadParams = {
         Bucket: process.env.AWS_S3_BUCKET_NAME,
@@ -97,6 +102,14 @@ export class PostingsService {
       include: {
         images: true,
         uploader: true,
+      },
+    });
+  }
+
+  async findByPostId(post_id: string) {
+    return this.prismaService.posting.findUnique({
+      where: {
+        post_id: post_id,
       },
     });
   }
