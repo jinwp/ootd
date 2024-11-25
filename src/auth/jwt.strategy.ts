@@ -17,4 +17,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload) {
     return { user_id: payload.user_id };
   }
+  //
+  // static extractJwtFromWsHandshake(req: Request | any): string | null {
+  //   if (req.handshake && req.handshake.auth && req.handshake.auth.token) {
+  //     return req.handshake.auth.token; // Extract token from WebSocket handshake auth
+  //   }
+  //   return null;
+  // }
 }

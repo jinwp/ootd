@@ -1,4 +1,5 @@
-import { IsDate, IsInt, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { IsDate, IsInt, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { Type } from "class-transformer";
 
 export class CreateUserDto {
   @IsString()
@@ -11,10 +12,12 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
-  @MinLength(8)
+  // @MinLength(8)
   password: string;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
+  @IsOptional()
+  @Type(() => Date)
   @IsDate()
   date_joined: Date;
 

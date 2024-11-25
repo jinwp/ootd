@@ -60,16 +60,11 @@ export class ChatService {
     }
   }
 
-  async getFirstTenMessages(first_user_id: string, second_user_id: string) {
+  async getFirstTenMessages(room_id: string, limit: number = 10, offset: number = 0) {
     try {
-      const [user1, user2] = first_user_id < second_user_id ? [first_user_id, second_user_id] : [second_user_id, first_user_id];
-
       const existingChatRoom = await this.prismaService.chatRoom.findUnique({
         where: {
-          first_user_id_second_user_id: {
-            first_user_id: user1,
-            second_user_id: user2,
-          },
+          room_id: room_id,
         },
       });
       if (!existingChatRoom) {
@@ -83,7 +78,8 @@ export class ChatService {
         orderBy: {
           timestamp: 'desc',
         },
-        take: 10,
+        take: limit,
+        skip: offset,
       });
 
       return messages;

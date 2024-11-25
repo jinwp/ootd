@@ -5,6 +5,7 @@ import { posting } from '@prisma/client';
 import { UpdatePostingDto } from './dto/update-posting.dto';
 import * as AWS from 'aws-sdk';
 import * as process from 'node:process';
+import { ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
 
 @Injectable()
 export class PostingsService {
