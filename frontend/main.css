@@ -1,0 +1,178 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #e0f7fa; /* Light sky blue */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  width: 90%;
+  max-width: 800px;
+  margin: auto;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Header Section */
+header {
+  background: #81c784; /* Light green */
+  color: #ffffff;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 3px solid #4caf50;
+  position: relative;
+}
+
+.header-buttons {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 50px;
+  box-sizing: border-box;
+}
+
+.create-posting-btn {
+  background-color: #ffb74d; /* Light orange */
+  color: #ffffff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.create-posting-btn:hover {
+  background-color: #fb8c00; /* Darker orange */
+}
+
+.chatrooms-btn {
+  background-color: #4caf50; /* Green button */
+  color: #ffffff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.chatrooms-btn:hover {
+  background-color: #388e3c;
+}
+
+.main-title {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+/* Filter Form */
+.filter-form {
+  padding: 20px;
+  background: #f0f4c3; /* Soft pastel yellow */
+}
+
+.filter-form h2 {
+  margin-bottom: 20px;
+  color: #4caf50; /* Green tone for contrast */
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 120px;
+}
+
+.filter-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #388e3c; /* Dark green */
+}
+
+.filter-group input,
+.filter-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #c8e6c9; /* Greenish border */
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.filter-button {
+  margin-top: 10px;
+  background-color: #4caf50; /* Green button */
+  color: #ffffff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+  background-color: #388e3c;
+}
+
+/* Main Content (Post Feed) */
+#post-feed {
+  padding: 20px;
+  text-align: center;
+}
+
+.post {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 8px;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.post img {
+  max-width: 100%;
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+.no-posts {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+/* Add styles for the View Profile button */
+.view-profile-btn {
+  background-color: #4caf50; /* Same green as Chatrooms button */
+  color: #ffffff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+  display: block; /* Ensure it appears under post content */
+}
+
+.view-profile-btn:hover {
+  background-color: #388e3c; /* Dark green on hover */
+}
+

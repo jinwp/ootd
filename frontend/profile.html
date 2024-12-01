@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="profile.css">
+  <title>Profile</title>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <button id="back-btn" class="back-btn">← Back</button>
+      <h1 class="profile-title">Profile</h1>
+    </header>
+
+    <main>
+      <div id="user-info" class="user-info">
+        <h2 id="user-name">User Name</h2>
+        <button id="chat-btn" class="chat-btn">Chat</button>
+        <p id="user-stats">Height: <span id="user-height">-</span> cm | Weight: <span id="user-weight">-</span> kg</p>
+      </div>
+
+      <section id="user-posts" class="user-posts">
+        <h3>Posts</h3>
+        <div id="posts-container" class="posts-container">
+          <!-- User's posts will be rendered here -->
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="profile.js"></script>
+</body>
+</html>

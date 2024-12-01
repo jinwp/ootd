@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update a Posting</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      max-width: 500px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    input, select, textarea, button {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    button:active {
+      transform: scale(0.95);
+      background-color: #ddd;
+    }
+    .preview-container {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .preview {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Update a Posting</h1>
+  <form id="postingForm">
+    <label for="semester">Semester:</label>
+    <select id="semester" name="semester" required>
+      <option value="">Select Semester</option>
+      <option value="spring">Spring</option>
+      <option value="summer">Summer</option>
+      <option value="autumn">Autumn</option>
+      <option value="winter">Winter</option>
+    </select>
+  
+    <label for="text">Text:</label>
+    <textarea id="text" name="text" rows="4" required placeholder="Write your post..."></textarea>
+  
+    <label for="files">Images:</label>
+    <input type="file" id="files" name="files" accept="image/*" multiple />
+  
+    <div class="preview-container" id="previewContainer"></div>
+  
+    <button type="submit">Submit</button>
+  </form>  
+
+  <script>
+    const form = document.getElementById('postingForm');
+    const previewContainer = document.getElementById('previewContainer');
+
+    // Extract post_id from URL query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const post_id = urlParams.get('post_id');
+    if (!post_id) {
+      alert('Post ID is missing in the URL!');
+      window.location.href = 'main.html'; // Redirect to main page
+    }
+
+    // Preview selected images
+    document.getElementById('files').addEventListener('change', (event) => {
+      previewContainer.innerHTML = '';
+      Array.from(event.target.files).forEach((file) => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.className = 'preview';
+        previewContainer.appendChild(img);
+      });
+    });
+
+    // Submit form data
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData();
+      const semester = document.getElementById('semester').value;
+      const text = document.getElementById('text').value;
+      const files = document.getElementById('files').files;
+
+      // Add fields to FormData
+      formData.append('semester', semester);
+      formData.append('text', text);
+
+      // Ensure the files field name matches the backend
+      Array.from(files).forEach((file) => {
+        formData.append('files', file); // 'files' matches the backend field
+      });
+
+      const token = localStorage.getItem('jwtToken');
+      if (!token) {
+        alert('Please log in first.');
+        return;
+      }
+
+      try {
+        // Update posting API call
+        const response = await fetch(`http://localhost:3000/postings/${post_id}`, {
+          method: 'POST', // Assuming POST is used for updates
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach JWT token
+          },
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Unknown error');
+        }
+
+        const data = await response.json();
+        alert('Posting updated successfully!');
+        form.reset();
+        previewContainer.innerHTML = '';
+        window.location.href = 'main.html';
+      } catch (error) {
+        console.error(error);
+        alert(`Error updating posting: ${error.message}`);
+      }
+    });
+  </script>
+</body>
+</html>

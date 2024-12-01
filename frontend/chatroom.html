@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Room</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      overflow: hidden;
+    }
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 10px;
+      overflow-y: auto;
+      height: calc(100vh - 150px); /* Adjust based on your header/footer */
+      box-sizing: border-box;
+    }
+    .message {
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 10px;
+      max-width: 60%; /* Prevent messages from taking the full width */
+      word-wrap: break-word;
+      display: inline-block;
+    }
+
+    /* Messages sent by the user */
+    .message.sent {
+      background-color: #d4edda;
+      align-self: flex-end; /* Align to the right */
+      text-align: left; /* Keep text aligned to the left inside the box */
+      margin-right: 10px;
+    }
+
+    /* Messages received from others */
+    .message.received {
+      background-color: #f8d7da;
+      align-self: flex-start; /* Align to the left */
+      text-align: left;
+      margin-left: 10px;
+    }
+    .message-input-container {
+      display: flex;
+      gap: 10px;
+    }
+    .message-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .send-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .send-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div id="messages" class="messages"></div>
+    <div class="message-input-container">
+      <input id="messageInput" class="message-input" type="text" placeholder="Type a message...">
+      <button id="sendButton" class="send-button">Send</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    const socket = io('http://localhost:3000/chat');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('room_id');
+    // console.log('Room ID:', roomId);
+
+    const userId = localStorage.getItem('userId'); // Assume the user ID is stored in localStorage.
+
+    const messagesContainer = document.getElementById('messages');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+
+    // Join the room
+    socket.emit('joinRoom', roomId);
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket server');
+    });
+
+    // Load previous messages
+    async function loadMessages(limit = 100, offset = 0) {
+      const response = await fetch(`http://localhost:3000/chat/messages/${roomId}?limit=${limit}&offset=${offset}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`,
+        },
+      });
+      if (response.ok) {
+        const messages = await response.json();
+        messages.reverse().forEach((message) => addMessage(message, message.sender_id === userId));
+      } else {
+        console.error('Failed to load messages');
+      }
+    }
+
+    loadMessages();
+
+    // Add a message to the chat
+    function addMessage(message, isSentByUser) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', isSentByUser ? 'sent' : 'received');
+      messageDiv.textContent = `${message.content}`;
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to the bottom
+    }
+
+    // socket.off('message'); // Remove any previous listener
+    // Listen for new messages
+    // console.log(payload);
+    socket.on('message', (payload) => {
+      console.log('Received message from server:', payload);
+      if (payload.room_id === roomId) {
+        addMessage(payload, payload.user === userId);
+      }
+    });
+
+    // Send a new message
+    sendButton.addEventListener('click', () => {
+      const message = messageInput.value.trim();
+      // if (!message) return;
+
+      console.log('Sending message:', { room_id: roomId, sender_id: userId, message: message });
+      socket.emit('message', { room_id: roomId, sender_id: userId, message: message });
+
+      // addMessage({ content: message }, true);
+      messageInput.value = '';
+    });
+  </script>
+</body>
+</html>

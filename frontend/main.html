@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="main.css">
+  <title>OOTD</title>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-buttons">
+        <button id="create-posting-btn" class="create-posting-btn">Create Posting</button>
+        <button id="chatrooms-btn" class="chatrooms-btn">Chatrooms</button>
+      </div>
+      <h1 class="main-title">OOTD</h1>
+      <form id="filter-form" class="filter-form">
+        <h2>Filter Posts</h2>
+        <div class="filter-row">
+          <div class="filter-group">
+            <label for="semester">Semester:</label>
+            <select id="semester" name="semester">
+              <option value="" disabled selected>Select a semester</option>
+              <option value="spring">Spring</option>
+              <option value="summer">Summer</option>
+              <option value="autumn">Autumn</option>
+              <option value="winter">Winter</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="minHeight">Min Height:</label>
+            <input type="number" id="minHeight" name="minHeight" placeholder="e.g., 150">
+          </div>
+          <div class="filter-group">
+            <label for="maxHeight">Max Height:</label>
+            <input type="number" id="maxHeight" name="maxHeight" placeholder="e.g., 200">
+          </div>
+          <div class="filter-group">
+            <label for="minWeight">Min Weight:</label>
+            <input type="number" id="minWeight" name="minWeight" placeholder="e.g., 50">
+          </div>
+          <div class="filter-group">
+            <label for="maxWeight">Max Weight:</label>
+            <input type="number" id="maxWeight" name="maxWeight" placeholder="e.g., 100">
+          </div>
+        </div>
+        <button type="submit" class="filter-button">Apply Filters</button>
+      </form>
+    </header>
+
+    <main id="post-feed">
+      <p class="no-posts">No posts available at the moment.</p>
+    </main>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>
