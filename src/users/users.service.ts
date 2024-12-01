@@ -12,7 +12,11 @@ export class UsersService {
         user_id: id,
       },
       include: {
-        postings: true,
+        postings: {
+          include: {
+            images: true,
+          },
+        },
       },
     });
   }

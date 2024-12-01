@@ -14,13 +14,12 @@ CREATE TABLE `user` (
 
 -- CreateTable
 CREATE TABLE `posting` (
-    `user_id` VARCHAR(191) NOT NULL,
     `post_id` VARCHAR(191) NOT NULL,
+    `user_id` VARCHAR(191) NOT NULL,
     `text` VARCHAR(191) NOT NULL,
     `date_created` DATETIME(3) NOT NULL,
     `semester` VARCHAR(191) NULL,
 
-    UNIQUE INDEX `posting_user_id_key`(`user_id`),
     PRIMARY KEY (`post_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

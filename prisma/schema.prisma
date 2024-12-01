@@ -28,9 +28,9 @@ model user {
 }
 
 model posting {
-  uploader  user     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  user_id   String   @unique
   post_id   String   @id @default(uuid())
+  uploader  user     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user_id   String
   images    Image[]
   text      String
   date_created  DateTime

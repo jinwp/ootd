@@ -5,18 +5,23 @@ import { posting } from '@prisma/client';
 import { UpdatePostingDto } from './dto/update-posting.dto';
 import * as AWS from 'aws-sdk';
 import * as process from 'node:process';
-import { ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
+import { ListBucketsCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { v4 as uuidv4 } from 'uuid';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PostingsService {
+  private s3Client: S3Client;
+
   constructor(private prismaService: PrismaService) {
-    AWS.config.update({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    this.s3Client = new S3Client({
       region: process.env.AWS_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+      },
     });
   }
-  private s3 = new AWS.S3();
 
   private async uploadImagesToAWS(files: Array<Express.Multer.File>) {
     if (!Array.isArray(files)) {
@@ -24,17 +29,26 @@ export class PostingsService {
     }
 
     const images = [];
-    //map, foreach 써서 비동기로 for loop 돌리기
     for (const file of files) {
+      const fileName = `postings/${uuidv4()}-${file.originalname}`;
       const uploadParams = {
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: `postings/${Date.now()}-${file.originalname}`,
+        Bucket: process.env.AWS_S3_BUCKET_NAME!,
+        Key: fileName,
         Body: file.buffer,
         ContentType: file.mimetype,
       };
+      // const uploadParams = {
+      //   Bucket: process.env.AWS_S3_BUCKET_NAME!,
+      //   Key: `postings/${Date.now()}-${file.originalname}`,
+      //   Body: file.buffer,
+      //   ContentType: file.mimetype,
+      // };
 
-      const { Location } = await this.s3.upload(uploadParams).promise();
-      images.push({ imageUrl: Location });
+      const command = new PutObjectCommand(uploadParams);
+      await this.s3Client.send(command);
+
+      const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+      images.push({ imageUrl });
     }
     return images;
   }
@@ -43,16 +57,16 @@ export class PostingsService {
     createPostingDto: CreatePostingDto,
     user_id: string,
     files: Express.Multer.File[],
-  ): Promise<posting> {
+  ) {
     const imageUrls = await this.uploadImagesToAWS(files);
     const { text, semester } = createPostingDto;
 
     const post = await this.prismaService.posting.create({
       data: {
-        user_id: user_id,
-        text: text,
+        user_id,
+        text,
         date_created: new Date(),
-        semester: semester,
+        semester,
         images: {
           create: imageUrls,
         },
@@ -122,6 +136,18 @@ export class PostingsService {
   ): Promise<posting> {
     const imageUrls = await this.uploadImagesToAWS(files);
     const { text, semester } = updatePostingDto;
+
+    const currentPost = await this.prismaService.posting.findUnique({
+      where: { post_id },
+      include: { images: true },
+    });
+
+    const imageIdsToDelete = currentPost.images.map((image) => image.id);
+    if (imageIdsToDelete.length > 0) {
+      await this.prismaService.image.deleteMany({
+        where: { id: { in: imageIdsToDelete } },
+      });
+    }
 
     const post = await this.prismaService.posting.update({
       where: {

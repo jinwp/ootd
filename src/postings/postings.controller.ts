@@ -81,7 +81,12 @@ export class PostingsController {
 
   @Delete(':post_id')
   @UseGuards(JwtAuthGuard)
-  async deletePosting(@Param('post_id') post_id: string) {
+  async deletePosting(@Param('post_id') post_id: string, @Request() req) {
+    const user_id = req.user.user_id;
+    const post = await this.postingsService.findByPostId(post_id);
+    if (!post || post.user_id !== user_id) {
+      throw new ForbiddenException('You cannot update other people posting');
+    }
     return this.postingsService.remove(post_id);
   }
 }

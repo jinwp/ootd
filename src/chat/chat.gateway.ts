@@ -6,7 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger, UseGuards, Request } from "@nestjs/common";
+import { Logger, UseGuards, Request } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 
 @WebSocketGateway({
