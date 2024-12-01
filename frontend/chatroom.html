@@ -26,30 +26,29 @@
       gap: 5px;
       padding: 10px;
       overflow-y: auto;
-      height: calc(100vh - 150px); /* Adjust based on your header/footer */
+      height: calc(100vh - 150px);
       box-sizing: border-box;
     }
     .message {
       padding: 10px;
       font-size: 14px;
       border-radius: 10px;
-      max-width: 60%; /* Prevent messages from taking the full width */
+      max-width: 60%;
       word-wrap: break-word;
       display: inline-block;
     }
 
-    /* Messages sent by the user */
     .message.sent {
       background-color: #d4edda;
-      align-self: flex-end; /* Align to the right */
-      text-align: left; /* Keep text aligned to the left inside the box */
+      align-self: flex-end;
+      text-align: left;
       margin-right: 10px;
     }
 
     /* Messages received from others */
     .message.received {
       background-color: #f8d7da;
-      align-self: flex-start; /* Align to the left */
+      align-self: flex-start;
       text-align: left;
       margin-left: 10px;
     }

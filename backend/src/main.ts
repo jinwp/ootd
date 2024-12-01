@@ -9,7 +9,11 @@ import { UnexpectedExceptionFilter } from "./http-exception.filter";
 
 dotenv.config({
   path: path.resolve(
-    process.env.NODE_ENV === 'local' ? '.env-local' : '.env-dev',
+    process.env.NODE_ENV === 'local'
+      ? '.env-local'
+      : process.env.NODE_ENV === 'production'
+        ? '.env-production'
+        : '.env-dev',
   ),
 });
 

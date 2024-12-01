@@ -8,7 +8,11 @@ const path = require("node:path");
 const swagger_1 = require("@nestjs/swagger");
 const http_exception_filter_1 = require("./http-exception.filter");
 dotenv.config({
-    path: path.resolve(process.env.NODE_ENV === 'local' ? '.env-local' : '.env-dev'),
+    path: path.resolve(process.env.NODE_ENV === 'local'
+        ? '.env-local'
+        : process.env.NODE_ENV === 'production'
+            ? '.env-production'
+            : '.env-dev'),
 });
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
